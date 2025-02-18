@@ -63,21 +63,31 @@ class OurAgent(KAgent):  # Keep the class name "OurAgent" so a game master
                                       # and do not import any LLM or special APIs.
                                       # During the tournament, this will be False..
        if utterances_matter:
-           pass
-           # Optionally, import your LLM API here.
-           # Then you can use it to help create utterances.
-           
+           # initialize llm
+           from google import genai
+           client = genai.Client(api_key="AIzaSyAF9Fi6xiPgE4BPzm6qCLRZfvYA5XVxc6M")
+
        # Write code to save the relevant information in variables
        # local to this instance of the agent.
        # Game-type info can be in global variables.
        self.current_game_type = game_type  # Set the current game type for later use.
        return "OK"
-           
+
+    def generate_utterance(self, move, score, state):
+        prompt = (
+            f"You are a witty and sarcastic game-playing agent named {self.nickname}, like spider-man's personality. "
+            f"You just played move {move} which resulted in a score of {score}. "
+            f"Craft a humorous and slightly irreverent comment about your move and the current state of the game,"
+            f"or even mislead the opponent. Banter is encouraged."
+        )
+        response = self.llm_client.generate(prompt)
+        return response
+
     def make_move(self, current_state, current_remark, time_limit=1000,
-                  autograding=False, use_alpha_beta=True,
-                  use_zobrist_hashing=False, max_ply=3,
-                  special_static_eval_fn=None):
-    
+                autograding=False, use_alpha_beta=True,
+                use_zobrist_hashing=False, max_ply=3,
+                special_static_eval_fn=None):
+
         best_score, best_move = self.minimax(current_state, max_ply, pruning=use_alpha_beta, special_static_eval_fn=special_static_eval_fn)
         if best_move is None:
             legal_moves = self.generate_moves(current_state)
@@ -89,8 +99,12 @@ class OurAgent(KAgent):  # Keep the class name "OurAgent" so a game master
             new_state.board[best_move[0]][best_move[1]] = marker
             new_state.change_turn()
 
-        new_remark = f"I chose move {best_move} with score {best_score}."
-       
+        # If we have LLM availability, use it. Otherwise, falls back to simple utterance.
+        if self.llm_client is not None:
+            new_remark = self.generate_utterance(best_move, best_score, current_state)
+        else:
+            new_remark = f"I chose move {best_move} with score {best_score}."
+
         return [[best_move, new_state], new_remark]
 
     def minimax(self,
