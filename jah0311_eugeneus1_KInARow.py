@@ -65,7 +65,8 @@ class OurAgent(KAgent):  # Keep the class name "OurAgent" so a game master
        if utterances_matter:
            # initialize llm
            from google import genai
-           client = genai.Client(api_key="AIzaSyAF9Fi6xiPgE4BPzm6qCLRZfvYA5XVxc6M")
+           from config import GOOGLE_API_KEY
+           client = genai.Client(api_key=GOOGLE_API_KEY)
 
        # Write code to save the relevant information in variables
        # local to this instance of the agent.
