@@ -73,6 +73,9 @@ class OurAgent(KAgent):  # Keep the class name "OurAgent" so a game master
        # local to this instance of the agent.
        # Game-type info can be in global variables.
        self.current_game_type = game_type  # Set the current game type for later use.
+       self.playing = what_side_to_play
+       self.opponent = opponent_nickname
+       self.time = expected_time_per_move
        return "OK"
 
     def generate_utterance(self, move, score, state):
@@ -80,7 +83,7 @@ class OurAgent(KAgent):  # Keep the class name "OurAgent" so a game master
             f"You are a witty and sarcastic game-playing agent named {self.nickname}, like spider-man's personality. "
             f"You just played move {move} which resulted in a score of {score}. "
             f"Craft a humorous and slightly irreverent comment about your move and the current state of the game, "
-            f"or even mislead the opponent. Banter is encouraged."
+            f"or even mislead the opponent, who is named {self.opponent}. Banter is encouraged."
         )
         try:
             response = self.client.models.generate_content(
@@ -96,7 +99,10 @@ class OurAgent(KAgent):  # Keep the class name "OurAgent" so a game master
                 use_zobrist_hashing=False, max_ply=3,
                 special_static_eval_fn=None):
 
-        best_score, best_move = self.minimax(current_state, max_ply, pruning=use_alpha_beta, special_static_eval_fn=special_static_eval_fn)
+        start_time = time.time()
+        best_score, best_move = self.minimax(current_state, max_ply, pruning=use_alpha_beta,
+                                             special_static_eval_fn=special_static_eval_fn,
+                                             start_time=start_time, time_limit=time_limit)
         if best_move is None:
             legal_moves = self.generate_moves(current_state)
             best_move = legal_moves[0] if legal_moves else None
@@ -121,8 +127,15 @@ class OurAgent(KAgent):  # Keep the class name "OurAgent" so a game master
                 pruning=False,
                 alpha=None,
                 beta=None,
-                special_static_eval_fn=None):
+                special_static_eval_fn=None,
+                start_time=None,
+                time_limit=None):
     
+        # Check if time limit is reached; if so, return static evaluation immediately.
+        if time_limit is not None and time.time() - start_time > time_limit:
+            eval_fn = special_static_eval_fn if special_static_eval_fn is not None else (lambda s: self.static_eval(s, self.current_game_type))
+            return [eval_fn(state), None]
+
         if depth_remaining == 0 or state.finished:
             eval_fn = special_static_eval_fn if special_static_eval_fn is not None else (lambda s: self.static_eval(s, self.current_game_type))
             return [eval_fn(state), None]
@@ -146,10 +159,13 @@ class OurAgent(KAgent):  # Keep the class name "OurAgent" so a game master
         if state.whose_move == "X":
             best_score = -float('inf')
             for move in legal_moves:
+                if time_limit is not None and time.time() - start_time > time_limit:
+                    break  # Return best found so far.
                 new_state = State(old=state)
                 new_state.board[move[0]][move[1]] = "X"
                 new_state.change_turn()
-                score = self.minimax(new_state, depth_remaining - 1, pruning, alpha, beta, special_static_eval_fn=special_static_eval_fn)[0]
+                score = self.minimax(new_state, depth_remaining - 1, pruning, alpha, beta,
+                                     special_static_eval_fn, start_time, time_limit)[0]
                 if score > best_score:
                     best_score = score
                     best_move = move
@@ -161,10 +177,13 @@ class OurAgent(KAgent):  # Keep the class name "OurAgent" so a game master
         else: 
             best_score = float('inf')
             for move in legal_moves:
+                if time_limit is not None and time.time() - start_time > time_limit:
+                    break
                 new_state = State(old=state)
                 new_state.board[move[0]][move[1]] = "O"
                 new_state.change_turn()
-                score = self.minimax(new_state, depth_remaining - 1, pruning, alpha, beta, special_static_eval_fn=special_static_eval_fn)[0]
+                score = self.minimax(new_state, depth_remaining - 1, pruning, alpha, beta,
+                                     special_static_eval_fn, start_time, time_limit)[0]
                 if score < best_score:
                     best_score = score
                     best_move = move
