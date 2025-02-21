@@ -131,13 +131,15 @@ class OurAgent(KAgent):  # Keep the class name "OurAgent" so a game master
                 start_time=None,
                 time_limit=None):
     
-        # Check if time limit is reached; if so, return static evaluation immediately.
+        # Check time limit
         if time_limit is not None and time.time() - start_time > time_limit:
             eval_fn = special_static_eval_fn if special_static_eval_fn is not None else (lambda s: self.static_eval(s, self.current_game_type))
+            self.num_static_evals_this_turn += 1
             return [eval_fn(state), None]
 
         if depth_remaining == 0 or state.finished:
             eval_fn = special_static_eval_fn if special_static_eval_fn is not None else (lambda s: self.static_eval(s, self.current_game_type))
+            self.num_static_evals_this_turn += 1
             return [eval_fn(state), None]
 
         if pruning:
@@ -152,6 +154,7 @@ class OurAgent(KAgent):  # Keep the class name "OurAgent" so a game master
         legal_moves = self.generate_moves(state)
         if not legal_moves:
             eval_fn = special_static_eval_fn if special_static_eval_fn is not None else (lambda s: self.static_eval(s, self.current_game_type))
+            self.num_static_evals_this_turn += 1
             return [eval_fn(state), None]
         
         best_move = None
@@ -172,6 +175,7 @@ class OurAgent(KAgent):  # Keep the class name "OurAgent" so a game master
                 if pruning:
                     alpha = max(alpha, best_score)
                     if beta <= alpha:
+                        self.alpha_beta_cutoffs_this_turn += 1
                         break
             return [best_score, best_move]
         else: 
@@ -190,6 +194,7 @@ class OurAgent(KAgent):  # Keep the class name "OurAgent" so a game master
                 if pruning:
                     beta = min(beta, best_score)
                     if beta <= alpha:
+                        self.alpha_beta_cutoffs_this_turn += 1
                         break
             return [best_score, best_move]
 
