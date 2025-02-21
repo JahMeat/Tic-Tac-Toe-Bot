@@ -40,6 +40,7 @@ class OurAgent(KAgent):  # Keep the class name "OurAgent" so a game master
         self.zobrist_table_num_entries_this_turn = -1
         self.zobrist_table_num_hits_this_turn = -1
         self.current_game_type = None
+        self.client = None
 
     def introduce(self):
         intro = '\nMy name is Jahgene!.\n'+\
@@ -66,7 +67,7 @@ class OurAgent(KAgent):  # Keep the class name "OurAgent" so a game master
            # initialize llm
            from google import genai
            from config import GOOGLE_API_KEY
-           client = genai.Client(api_key=GOOGLE_API_KEY)
+           self.client = genai.Client(api_key=GOOGLE_API_KEY)
 
        # Write code to save the relevant information in variables
        # local to this instance of the agent.
@@ -78,11 +79,17 @@ class OurAgent(KAgent):  # Keep the class name "OurAgent" so a game master
         prompt = (
             f"You are a witty and sarcastic game-playing agent named {self.nickname}, like spider-man's personality. "
             f"You just played move {move} which resulted in a score of {score}. "
-            f"Craft a humorous and slightly irreverent comment about your move and the current state of the game,"
+            f"Craft a humorous and slightly irreverent comment about your move and the current state of the game, "
             f"or even mislead the opponent. Banter is encouraged."
         )
-        response = self.llm_client.generate(prompt)
-        return response
+        try:
+            response = self.client.models.generate_content(
+                model="gemini-2.0-flash",
+                contents=prompt
+            )  
+            return response.text.strip()  
+        except Exception as e:
+            return f"Oops, I lost my witty banter skills: {str(e)}"
 
     def make_move(self, current_state, current_remark, time_limit=1000,
                 autograding=False, use_alpha_beta=True,
@@ -101,7 +108,7 @@ class OurAgent(KAgent):  # Keep the class name "OurAgent" so a game master
             new_state.change_turn()
 
         # If we have LLM availability, use it. Otherwise, falls back to simple utterance.
-        if self.llm_client is not None:
+        if self.client is not None:
             new_remark = self.generate_utterance(best_move, best_score, current_state)
         else:
             new_remark = f"I chose move {best_move} with score {best_score}."
