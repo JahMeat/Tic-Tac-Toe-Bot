@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html><head>
+    <link rel="stylesheet" href="GameMasterFiles/wgm.css">
+    <title>Agent Matches: K-in-a-Row Game Demo Site (Beta 2: 10 Mar. 2025)</title>
+
+    <script src="./GameMasterFiles/js/voices-for-agents.js"></script>
+
+</head>
+
+    <body onload="if (USE_VOICES) {startVoices()}">
+
+<h1>Agent Matches: K-in-a-Row Game Demo Site (Beta 2: 10 Mar. 2025)</h1>
+</td></tr></table>
+
+<!-- <py-config type="toml">-->
+<div hidden>
+ <py-config>
+   [[fetch]]
+   from = 'GameMasterFiles/'
+   files = [
+    "./GameMaster.py",
+    "./WebGameClient.py",
+    "./GameVisForPyScript.py",
+    "./winTesterForK.py",
+    ]
+   [[fetch]]
+   from = 'Agents/'
+   files = [
+    "./agent_base.py",
+    "./game_types.py",
+    "./RandomPlayer.py",
+    "./hwang38_KInARow.py",
+    "./kohei28_KInARow.py",
+    "./nate235_KInARow.py",
+    "./cadetank_KInARow.py",
+    "./zhengkun_KInARow.py",
+    "./Notorious_JAH_KInARow.py",
+    ]
+    </py-config>
+</div>
+<!-- <script defer src="https://pyscript.net/latest/pyscript.js"></script>
+-->
+<script type="module" src="https://pyscript.net/releases/2025.2.3/core.js"></script>
+
+Game type: <select name="gametype" id="game-select">
+  <option value="">--choose game--</option>
+  <option value="TTT">Tic-Tac-Toe</option>
+  <option value="FIAR" selected="true">Five-in-a-Row on Seven-by-Seven Board with Corners Forbidden</option>
+  <option value="Cassini">Cassini</option>
+</select>
+
+<br> 
+<table width="100%">
+  
+  <tr>
+    <td> Playing X: <select id="playerX">TTT Queen</select>
+    &nbsp; Playing O: <select id="playerO">TTT King</select></td>
+</tr>  
+  <tr>
+    <td>Voices: <select id="useVoices">
+	<option selected="true">off</option>
+	<option>on</option>
+      </select>
+      <button id="voicesHelp">Voices Help</button>
+      &nbsp;
+     <!--
+      <button id="skipUtterance">Skip This Utterance</button>
+      -->
+  </td></tr>
+  <tr><td>
+      &nbsp; &nbsp; &nbsp;
+      <!--Speaking Rate:
+ <select id="rate">
+	<option selected="true" value="1">normal</option>
+	<option value="2">faster</option>
+	<option value="4">fastest</option>
+      </select>
+-->
+      &nbsp; Use voices from:
+ <select id="voicesFrom">
+	<option selected="true">agents' preferences</option>
+	<option>Game Master's best guess</option>
+	<option>Browser's standard voice</option>
+      </select>
+      </td>
+</tr>  
+
+  <tr>
+    <td>Pause after each move for <select id="wait-after-moves">
+	<option id="T0" value="0.01" selected>0.01 sec</option>
+	<option id="T1" value="0.05">0.05 sec</option>
+	<option id="T2" value="0.1">0.10 sec</option>
+	<option id="T3" value="0.25">0.25 sec</option>
+	<option id="T4" value="0.5">0.5 sec</option>
+	<option id="T5" value="1">1 sec</option>
+	<option id="T6" value="2">2 sec</option>
+	<option id="T7" value="5">5 sec</option>
+	<option id="T8" value="10">10 sec</option>
+	</select> </td>
+  </tr>
+  <tr>
+    <td><button id="start">Start the Game</button> </td>
+  </tr>
+
+  <tr><td align="center">
+<b><span>Game Board</span></b>
+    </td>
+    <td align="center"><b>Textual Transcript</b></td>
+  </tr>
+  <tr><td>
+<canvas id="board"
+style="border:1px solid #d3d3d3;">
+Your browser does not support the HTML5 canvas tag.
+</canvas>
+
+  </td>
+  <td>
+      <textarea id="dialog" height="auto"></textarea>	
+  </td>
+</tr>
+<tr><td><div id="CC">CC: Closed Captioning Area</div></td></tr>
+
+</table>
+
+<script>
+var CANVAS_WIDTH = 500;
+var CANVAS_HEIGHT = 500;
+var CANVAS = document.getElementById("board");
+var CTX = CANVAS.getContext("2d");
+
+CTX.fillStyle = "blue";
+CTX.font = "bold 18px serif";
+CTX.textAlign = 'center';
+CTX.textBaseline = 'middle';
+CTX.fillText("Loading Python -- please wait", (CANVAS.width / 2), (CANVAS.height / 2));
+
+window.onload = function() {
+   var CANVAS = document.getElementById("board");
+   CTX = CANVAS.getContext("2d");
+};
+
+console.log("In index.html, the Javascript code is done.");
+</script>
+
+<py-script src="./GameMasterFiles/WebGameClient.py">  </py-script>
+
+<p><b>How to Play:</b>
+Select your Game Version, and Players, or go with the defaults.
+Press "Start the Game" to start the game.
+</body>
+</html>

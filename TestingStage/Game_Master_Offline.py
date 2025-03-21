@@ -14,7 +14,7 @@ tournament play.
 
 from time import sleep
 USE_HTML = True
-if USE_HTML: import gameToHTML
+if USE_HTML: import gameToHTML as gameToHTML
 
 from winTesterForK import winTesterForK
 
@@ -188,7 +188,7 @@ def test():
     # which is a "twin".
 
     #import yourUWNetID_KInARow as h
-    import jah0311_eugeneus1_KInARow as h
+    import JAHtest as h
     import RandomPlayer as r
     px = h.OurAgent()
     po = r.OurAgent()

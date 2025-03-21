@@ -4,7 +4,7 @@ minimax and alpha-beta search.
 
 '''
 
-import game_types
+import game_types as game_types
 SE_TABLE = {
 'OOXXOX  X': 91,
 'OOXXO X X': 10,

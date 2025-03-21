@@ -113,7 +113,7 @@ Cassini = Game_Type("Cassini (5 in a row that does not hit Saturn)",
                     7,
                     8,
                     CASSINI_INITIAL_STATE_DATA,
-                    44,
+                    46,
                     1)
 
 def test():
@@ -123,4 +123,3 @@ def test():
 
 if __name__ == "__main__":
     test()
-    

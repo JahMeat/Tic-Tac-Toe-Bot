@@ -36,9 +36,9 @@ python3 autograder.py
 
 '''
 
-import game_types
-import jah0311_eugeneus1_KInARow as agent_module
-import spec_static_by_table
+import game_types as game_types
+import JAHtest as agent_module
+import spec_static_by_table as spec_static_by_table
 
 
 def test_static_eval(agent):
