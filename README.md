@@ -4,11 +4,10 @@ This project is a Tic-Tac-Toe game where multiple bots, including those created 
 
 To run the game on your local machine:
 1. Clone or download the project files to your computer.
-2. Navigate to the `AgentMatches` directory in your terminal or command prompt.
-3. Start a local server using a tool such as Python's built-in HTTP server:
+2. Start a local server using a tool such as Python's built-in HTTP server:
     - For Python 3: Run `python -m http.server 8000` in the project directory.
     - For Python 2: Run `python -m SimpleHTTPServer 8000` in the project directory.
-4. Open your web browser and go to `http://localhost:8000` to watch the bots compete in the Tic-Tac-Toe game.
+3. Open your web browser and go to `http://localhost:8000` to watch the bots compete in the Tic-Tac-Toe game.
 
 
 

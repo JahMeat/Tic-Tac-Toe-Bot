@@ -3,6 +3,30 @@ import random
 from agent_base import KAgent
 from game_types import State, Game_Type
 
+class Zobrist:
+    def __init__(self, n, m):
+        self.n = n
+        self.m = m
+        self.table = {((r, c, p)): random.getrandbits(64) for r in range(n) for c in range(m) for p in ["X", "O"]}
+        self.cache = {}
+
+    def compute_hash(self, board):
+        h = 0
+        for r in range(self.n):
+            for c in range(self.m):
+                piece = board[r][c]
+                if piece in ["X", "O"]:
+                    h ^= self.table[(r, c, piece)]
+        return h
+
+    def store(self, board, score):
+        h = self.compute_hash(board)
+        self.cache[h] = score
+
+    def lookup(self, board):
+        h = self.compute_hash(board)
+        return self.cache.get(h, None)
+
 class OurAgent(KAgent): 
 
     def __init__(self, twin=False):
@@ -257,27 +281,3 @@ class OurAgent(KAgent):
             elif o_count > 0 and x_count == 0:
                 score -= 10 ** (o_count - 1)
         return score
-
-class Zobrist:
-    def __init__(self, n, m):
-        self.n = n
-        self.m = m
-        self.table = {((r, c, p)): random.getrandbits(64) for r in range(n) for c in range(m) for p in ["X", "O"]}
-        self.cache = {}
-
-    def compute_hash(self, board):
-        h = 0
-        for r in range(self.n):
-            for c in range(self.m):
-                piece = board[r][c]
-                if piece in ["X", "O"]:
-                    h ^= self.table[(r, c, piece)]
-        return h
-
-    def store(self, board, score):
-        h = self.compute_hash(board)
-        self.cache[h] = score
-
-    def lookup(self, board):
-        h = self.compute_hash(board)
-        return self.cache.get(h, None)
