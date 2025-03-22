@@ -2,7 +2,6 @@ import time
 import random
 from agent_base import KAgent
 from game_types import State, Game_Type
-
 class Zobrist:
     def __init__(self, n, m):
         self.n = n
@@ -56,6 +55,10 @@ class OurAgent(KAgent):
         self.time = expected_time_per_move
         self.zobrist = Zobrist(game_type.n, game_type.m)
         return "OK"
+    
+    def say_something(self, text):
+        asyncTalk(self.voice, text, lambda: None)  # no callback needed
+
 
     def generate_utterance(self, move, score, state):
         rap_responses = [

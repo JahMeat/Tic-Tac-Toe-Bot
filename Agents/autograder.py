@@ -37,7 +37,7 @@ python3 autograder.py
 '''
 
 import game_types as game_types
-import Notorious_JAH_KInARow.py as agent_module
+import Notorious_JAH_KInARow as agent_module
 import spec_static_by_table as spec_static_by_table
 
 

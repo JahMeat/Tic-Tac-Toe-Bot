@@ -1,13 +1,18 @@
-# Tic-Tac-Toe Bot
+# Tic-Tac-Toe Bot (CSE 415 Project)
 
-This project is a Tic-Tac-Toe game where multiple bots, including those created by classmates in the Intro to AI course (CSE 415), compete against each other. One of the bots, "Notorious J.A.H," was developed by the author of this project.
+This project is a web-based AI game interface where multiple bots — including those created by students in the Intro to AI course (CSE 415) — compete in games like Tic-Tac-Toe, Connect-K, and Cassini. One featured bot, "Notorious J.A.H," was developed by the author of this project.
 
-To run the game on your local machine:
-1. Clone or download the project files to your computer.
-2. Start a local server using a tool such as Python's built-in HTTP server:
-    - For Python 3: Run `python -m http.server 8000` in the project directory.
-    - For Python 2: Run `python -m SimpleHTTPServer 8000` in the project directory.
-3. Open your web browser and go to `http://localhost:8000` to watch the bots compete in the Tic-Tac-Toe game.
+## How to Run the Game Locally
 
+1. Clone or download this repository to your computer.
+
+2. Start a local web server from the **project directory** using one of the options below:
+
+    **Using Python 3 (recommended):**
+    ```bash
+    python -m http.server 5500
+    ```
+3. Open your browser and go to: http://localhost:5500
+    
 
 

@@ -175,4 +175,3 @@ function asyncSpeak(voice, text) {
       }
       return window.theVoice;
   }
-  
